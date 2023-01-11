@@ -162,6 +162,26 @@ else:
     app = Client(name='pyrogram', api_id=TELEGRAM_API, api_hash=TELEGRAM_HASH, session_string=USER_SESSION_STRING, parse_mode=enums.ParseMode.HTML, no_updates=True)
     with app:
         IS_PREMIUM_USER = app.me.is_premium
+        
+        
+try:
+    IS_PREMIUM_USER = False
+    USER_SESSION_STRING = environ.get('USER_SESSION_STRING')
+    if len(USER_SESSION_STRING) == 0:
+        raise KeyError
+    log_info("Creando cliente desde USER_SESSION_STRING")
+    app_session = Client(name='pyrogram', api_id=TELEGRAM_API, api_hash=TELEGRAM_HASH, session_string=USER_SESSION_STRING, parse_mode=enums.ParseMode.HTML, no_updates=True)
+    with app_session:
+        user = app_session.get_me()
+        if user.is_premium:
+            IS_PREMIUM_USER = True
+            log_info("El Usuario es Premium")
+        else:
+            IS_PREMIUM_USER = False
+            log_info("El Usuario no es Premium")
+except:
+    USER_SESSION_STRING = None
+    app_session = None        
 
 RSS_USER_SESSION_STRING = environ.get('RSS_USER_SESSION_STRING', '')
 if len(RSS_USER_SESSION_STRING) == 0:
@@ -206,13 +226,16 @@ SEARCH_PLUGINS = environ.get('SEARCH_PLUGINS', '')
 if len(SEARCH_PLUGINS) == 0:
     SEARCH_PLUGINS = ''
 
-MAX_SPLIT_SIZE = 4194304000 if IS_PREMIUM_USER else 2097152000
-
-LEECH_SPLIT_SIZE = environ.get('LEECH_SPLIT_SIZE', '')
-if len(LEECH_SPLIT_SIZE) == 0 or int(LEECH_SPLIT_SIZE) > MAX_SPLIT_SIZE:
-    LEECH_SPLIT_SIZE = MAX_SPLIT_SIZE
-else:
+try:
+    LEECH_SPLIT_SIZE = environ.get('LEECH_SPLIT_SIZE')
+    if len(LEECH_SPLIT_SIZE) == 0 or (not IS_PREMIUM_USER and int(LEECH_SPLIT_SIZE) > 2097152000) \
+       or int(LEECH_SPLIT_SIZE) > 4194304000:
+        raise KeyError
     LEECH_SPLIT_SIZE = int(LEECH_SPLIT_SIZE)
+except:
+    LEECH_SPLIT_SIZE = 4194304000 if IS_PREMIUM_USER else 2097152000
+    
+MAX_SPLIT_SIZE = 4194304000 if IS_PREMIUM_USER else 2097152000
 
 STATUS_UPDATE_INTERVAL = environ.get('STATUS_UPDATE_INTERVAL', '')
 if len(STATUS_UPDATE_INTERVAL) == 0:
