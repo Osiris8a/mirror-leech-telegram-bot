@@ -47,20 +47,20 @@ def stats(update, context):
 
 def start(update, context):
     buttons = ButtonMaker()
-    buttons.buildbutton("Repo", "https://www.github.com/anasty17/mirror-leech-telegram-bot")
+    buttons.buildbutton("Repo", "https://github.com/Osiris8a/mirror-leech-telegram-bot")
     buttons.buildbutton("Owner", "https://www.github.com/anasty17")
     reply_markup = buttons.build_menu(2)
     if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):
         start_string = f'''
-This bot can mirror all your links to Google Drive or to telegram!
-Type /{BotCommands.HelpCommand} to get a list of available commands
+Este bot puede subir archivos directamente a Google Drive o Telegram!
+Escribe /{BotCommands.HelpCommand} para obtener una lista de **comandos disponibles**
 '''
         sendMessage(start_string, context.bot, update.message, reply_markup)
     else:
-        sendMessage('Not an Authorized user, deploy your own mirror-leech bot', context.bot, update.message, reply_markup)
+        sendMessage('No eres un usuario autorizado, deploy tu propio mirror-leech bot', context.bot, update.message, reply_markup)
 
 def restart(update, context):
-    restart_message = sendMessage("Restarting...", context.bot, update.message)
+    restart_message = sendMessage("Reiniciando...", context.bot, update.message)
     if Interval:
         Interval[0].cancel()
         Interval.clear()
@@ -85,7 +85,7 @@ def log(update, context):
     sendLogFile(context.bot, update.message)
 
 help_string = f'''
-NOTE: Try each command without any argument to see more detalis.
+NOTA: Prueba cada comando sin ningún argumento para mirar más detalles.
 /{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
 /{BotCommands.ZipMirrorCommand[0]} or /{BotCommands.ZipMirrorCommand[1]}: Start mirroring and upload the file/folder compressed with zip extension.
 /{BotCommands.UnzipMirrorCommand[0]} or /{BotCommands.UnzipMirrorCommand[1]}: Start mirroring and upload the file/folder extracted from any archive extension.
